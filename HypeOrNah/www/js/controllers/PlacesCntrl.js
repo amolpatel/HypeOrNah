@@ -1,10 +1,12 @@
 angular.module('hypeOrNah')
 
 .controller('PlacesCntrl', function($scope, $timeout, googleFactory) {
-    //$scope.items = ['Item 1', 'Item 2', 'Item 3'];
-  
-    $scope.getLocations = function(placesCallback){
 
+    /*
+    *   Populates the list of places
+    */
+    $scope.getLocations = function(){
+        var mapsAttr = document.getElementById('mapsAttr'); 
         // get clients position 
         var locOptions = {
             enableHighAccuracy: true,
@@ -22,7 +24,7 @@ angular.module('hypeOrNah')
             /*
             * Make call to Google Places API
             */
-            googleFactory.getLocations(crd, document.getElementById('mapsId'), placesCallback);
+            googleFactory.getLocations(crd, $scope.placesType, mapsAttr, placesCallback);
             function placesCallback(results, status) {
                 console.log(status); 
                 if (status == google.maps.places.PlacesServiceStatus.OK) {
@@ -41,13 +43,14 @@ angular.module('hypeOrNah')
 
     }; 
 
-    $scope.printPlaces = function(){
-        console.log($scope.places); 
-    }
-
+    /*
+    *   List refresh handler
+    */
     $scope.doRefresh = function() {
     
         console.log('Refreshing!');
+        // refersh locations list
+        $scope.getLocations();
         $timeout( function() {
             //Stop the ion-refresher from spinning
             $scope.$broadcast('scroll.refreshComplete');
@@ -55,7 +58,20 @@ angular.module('hypeOrNah')
         }, 1000);
       
     };
+
+    $scope.setActive = function(type) {
+        $scope.placesType = type;
+        // refresh content
+        $scope.doRefresh(); 
+    };
+
+    $scope.isActive = function(type) {
+        return type === $scope.placesType;
+    };
   
-    // load locations 
-    $scope.getLocations();
+
+    // set active radiu buttons
+    $scope.placesType = 'night_club'; 
+    // initial refersh to get content
+    $scope.doRefresh(); 
 });

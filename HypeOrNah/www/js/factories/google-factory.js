@@ -9,7 +9,7 @@ angular.module('hypeOrNah')
             /*
             *   Get's a list of locations from the Google Places API service given clients coordinates
             */
-            googleFactory.getLocations = function(pos, map, placesCallback){
+            googleFactory.getLocations = function(pos, type, map, placesCallback){
                 googlePlaces(); 
                 // makes the call to the Google Places services and returns results.
                 function googlePlaces(){
@@ -21,8 +21,8 @@ angular.module('hypeOrNah')
                     var request = {
                         location: loc,
                         rankby: google.maps.places.RankBy.DISTANCE,
-                        radius: '15000',
-                        types: ['bar', 'club', 'night_club']
+                        radius: '10000',
+                        types: [type]
                     };
 
                     service = new google.maps.places.PlacesService(map);

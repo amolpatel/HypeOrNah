@@ -26,18 +26,30 @@
     <script src="js/controllers/PlacesCntrl.js"></script>
   </head>
   <body ng-controller="PlacesCntrl">
-
+    <!-- header bar -->
     <ion-header-bar class="bar-positive">
       <h1 class="title">HypeOrNah</h1>
     </ion-header-bar>
     <ion-content>
-      <ion-refresher on-refresh="doRefresh()">
-                     
-      </ion-refresher>
+      <!-- refresh content, loaded when list pulled down -->
+      <ion-refresher on-refresh="doRefresh()"></ion-refresher>
+      <!-- main list of places, TODO: should probably be a template? -->
       <ion-list>
         <ion-item ng-repeat="place in places">{{place.name}}</ion-item>
       </ion-list>
     </ion-content>
-    <div id='mapsId'></div>
+    <!-- div to render Google Places Attributions -->
+    <div id='mapsAttr'></div>
+    <!-- footer -->
+    <ion-footer-bar class="bar-positive">
+    <div class="button-bar">
+      <a class="button" ng-class="{'button-energized': isActive('night_club')}" 
+        ng-click="setActive('night_club')">Clubs</a>
+    <a class="button" ng-class="{'button-energized': isActive('bar')}" 
+        ng-click="setActive('bar')">Bars</a>
+    <a class="button" ng-class="{'button-energized': isActive('greek')}" 
+        ng-click="setActive('greek')">Greek</a>
+    </div>
+  </ion-footer-bar>
   </body>
 </html>
