@@ -1,6 +1,6 @@
 angular.module('hypeOrNah')
 
-.controller('PlacesCntrl', function($scope, $timeout, googleFactory) {
+.controller('PlacesCntrl', function($scope, $timeout, googleFactory, fbaseFactory) {
 
     /*
     *   Populates the list of places
@@ -28,9 +28,34 @@ angular.module('hypeOrNah')
             function placesCallback(results, status) {
                 console.log(status); 
                 if (status == google.maps.places.PlacesServiceStatus.OK) {
-                    $scope.places = results;  
+                    var places = []; 
+                    for(i = 0; i < results.length; i++){
+                        var fbPlace = fbaseFactory.getPlace(results[i].place_id);
+                        if(!fbPlace){
+                            console.log("place did not exist, adding to firebase"); 
+                            // google places location is not currently in database,
+                            // add it.
+                            var currPlace = {
+                                name: results[i].name, 
+                                up_votes: 0, 
+                                down_votes: 0, 
+                                source: 'Google Places' 
+                            }; 
+                            fbaseFactory.writeLocation(currPlace, results[i].place_id); 
+                            places.push(currPlace); 
+                        }
+                        else{
+                            console.log('place already exists'); 
+                            places.push(fbPlace);
+                        } 
+                    } 
+
+                    console.log("done checking places"); 
+                    console.log(places); 
+                    $scope.places = places; 
                 }
                 else{
+                    // error making places call
                     console.warn("Error making google places call"); 
                     $scope.places = []; 
                 }

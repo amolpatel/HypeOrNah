@@ -20,8 +20,10 @@
 
     <!-- your app's js -->
     <script src="js/app.js"></script>
+    <script src="https://cdn.firebase.com/js/client/2.2.0/firebase.js"></script>
     <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=places"></script>
     <script src="js/factories/google-factory.js"></script>
+    <script src="js/factories/fbase-factory.js"></script>
     <!-- controllers -->
     <script src="js/controllers/PlacesCntrl.js"></script>
   </head>
@@ -35,7 +37,7 @@
       <ion-refresher on-refresh="doRefresh()"></ion-refresher>
       <!-- main list of places, TODO: should probably be a template? -->
       <ion-list>
-        <ion-item ng-repeat="place in places">{{place.name}}</ion-item>
+        <ion-item ng-repeat="place in places">{{place.name + ", up: " + place.up_votes + ", down: " + place.down_votes}}</ion-item>
       </ion-list>
     </ion-content>
     <!-- div to render Google Places Attributions -->

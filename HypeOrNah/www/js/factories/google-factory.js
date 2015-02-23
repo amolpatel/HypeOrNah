@@ -21,7 +21,7 @@ angular.module('hypeOrNah')
                     var request = {
                         location: loc,
                         rankby: google.maps.places.RankBy.DISTANCE,
-                        radius: '10000',
+                        radius: '5000',
                         types: [type]
                     };
 
