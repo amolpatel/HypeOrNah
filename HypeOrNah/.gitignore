@@ -4,3 +4,7 @@
 node_modules/
 platforms/
 plugins/
+hooks/*
+hooks/
+hooks/after_prepare*
+hooks/after_prepare/*
