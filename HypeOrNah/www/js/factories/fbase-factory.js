@@ -9,15 +9,8 @@ angular.module('hypeOrNah')
             /* 
             * retreives a place object from firebase
             */
-            fbaseFactory.getPlace = function(place_id){
-                console.log('looking for place: '); 
-                console.log(place_id);  
-                ref.child(place_id).once("value", function(data) {
-                    console.log(":::::::::"); 
-                    console.log(data.val()); 
-                    console.log("::::::::::"); 
-                    return data.val(); 
-                }); 
+            fbaseFactory.getPlace = function(place_id, callback){
+                ref.child(place_id).once("value", callback); 
             }; 
 
             fbaseFactory.writeLocation = function(data, place_id){ 

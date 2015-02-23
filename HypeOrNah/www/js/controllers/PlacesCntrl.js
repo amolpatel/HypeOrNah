@@ -6,6 +6,7 @@ angular.module('hypeOrNah')
     *   Populates the list of places
     */
     $scope.getLocations = function(){
+        $scope.places = []; 
         var mapsAttr = document.getElementById('mapsAttr'); 
         // get clients position 
         var locOptions = {
@@ -30,36 +31,43 @@ angular.module('hypeOrNah')
                 if (status == google.maps.places.PlacesServiceStatus.OK) {
                     var places = []; 
                     for(i = 0; i < results.length; i++){
-                        var fbPlace = fbaseFactory.getPlace(results[i].place_id);
-                        if(!fbPlace){
-                            console.log("place did not exist, adding to firebase"); 
-                            // google places location is not currently in database,
-                            // add it.
-                            var currPlace = {
-                                name: results[i].name, 
-                                up_votes: 0, 
-                                down_votes: 0, 
-                                source: 'Google Places' 
-                            }; 
-                            fbaseFactory.writeLocation(currPlace, results[i].place_id); 
-                            places.push(currPlace); 
-                        }
-                        else{
-                            console.log('place already exists'); 
-                            places.push(fbPlace);
-                        } 
-                    } 
+                        fbaseFactory.getPlace(results[i].place_id, (function(index) {
+                            return function(data){
+                                var place = data.val(); 
+                                // get data call back with i in scope
+                                if(!place){
+                                    // no corresponding firebase place for google place, add to database
+                                    console.log("place did not exist, adding to firebase"); 
+                                    var currPlace = {
+                                        name: results[index].name, 
+                                        up_votes: 0, 
+                                        down_votes: 0, 
+                                        source: 'Google Places' 
+                                    };  
 
-                    console.log("done checking places"); 
-                    console.log(places); 
-                    $scope.places = places; 
+                                    // write data to firebase and notify UI
+                                    fbaseFactory.writeLocation(currPlace, results[index].place_id); 
+                                    $scope.places.push(currPlace); 
+                                }
+                                else{
+                                    // found place in firebase, hand off to UI
+                                    console.log("found place in firebase %O", place);
+                                    $scope.places.push(place);  
+                                }
+
+                                // check if this was the last item
+                                if(index == (results.length - 1))
+                                    $scope.$broadcast('scroll.refreshComplete');
+                            }; 
+                        })(i));
+                    }
                 }
                 else{
                     // error making places call
                     console.warn("Error making google places call"); 
                     $scope.places = []; 
                 }
-            }
+            }; 
         }; 
         // client location error callback
         function locError(err) {
@@ -80,9 +88,16 @@ angular.module('hypeOrNah')
             //Stop the ion-refresher from spinning
             $scope.$broadcast('scroll.refreshComplete');
     
-        }, 1000);
+        }, 5000);
       
     };
+
+    $scope.testClick = function(){
+        console.log("====== printing places========"); 
+        for(i = 0; i < $scope.places.length; i++){
+            console.log($scope.places[i]); 
+        }
+    }
 
     $scope.setActive = function(type) {
         $scope.placesType = type;
