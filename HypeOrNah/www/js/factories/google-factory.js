@@ -18,15 +18,27 @@ angular.module('hypeOrNah')
 
                     var loc = new google.maps.LatLng(pos.latitude, pos.longitude);
 
-                    var request = {
-                        location: loc,
-                        rankby: google.maps.places.RankBy.DISTANCE,
-                        radius: '5000',
-                        types: [type]
-                    };
-
+                    var request; 
                     service = new google.maps.places.PlacesService(map);
-                    service.nearbySearch(request, placesCallback);
+                    if(type == 'greek'){
+                        request = {
+                            location: loc, 
+                            radius: '5000', 
+                            query: 'fraternity'
+                        }; 
+
+                        service.textSearch(request, placesCallback);
+                    }
+                    else{
+                        request = {
+                            location: loc,
+                            rankby: google.maps.places.RankBy.DISTANCE,
+                            radius: '5000',
+                            types: [type]
+                        };
+                        service.nearbySearch(request, placesCallback); 
+                    }
+                    
                 };
             }; 
 
