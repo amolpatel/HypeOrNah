@@ -2776,6 +2776,7 @@ a.subdued {
   .bar.bar-positive {
     border-color: #0c63ee;
     background-color: #387ef5;
+    background-color: #34495e;  /*custom color*/
     background-image: linear-gradient(0deg, #0c63ee, #0c63ee 50%, transparent 50%);
     color: #fff; }
     .bar.bar-positive .title {
@@ -2955,15 +2956,15 @@ a.subdued {
     background: none; }
 
 .bar-positive .button {
-  border-color: #0c63ee;
-  background-color: #387ef5;
+  border-color: #34495e;
+  background-color: #7f8c8d;/*custom color added*/
   color: #fff; }
   .bar-positive .button:hover {
     color: #fff;
     text-decoration: none; }
   .bar-positive .button.active, .bar-positive .button.activated {
-    border-color: #0c63ee;
-    background-color: #0c63ee;
+    border-color: #34495e;
+    background-color: #34495e;
     box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.1); }
   .bar-positive .button.button-clear {
     border-color: transparent;
@@ -3124,7 +3125,9 @@ a.subdued {
 .bar-subheader {
   top: 44px;
   display: block;
-  height: 44px; }
+  height: 44px;
+  background-color: #ecf0f1;
+}
 
 .bar-subfooter {
   bottom: 44px;
@@ -6217,6 +6220,33 @@ progress {
         background-color: #444;
         box-shadow: none;
         color: #fff; }
+.button.button-hype {
+    border-color: #111;
+    background-color: #95a5a6;
+    color: #fff; }
+.button.button-hype:hover {
+    color: #fff;
+    text-decoration: none; }
+.button.button-hype.active, .button.button-hype.activated {
+    border-color: #000;
+    background-color: #7f8c8d;
+    box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.1); }
+.button.button-hype.button-clear {
+    border-color: transparent;
+    background: none;
+    box-shadow: none;
+    color: #444; }
+.button.button-hype.button-icon {
+    border-color: transparent;
+    background: none; }
+.button.button-hype.button-outline {
+    border-color: #444;
+    background: transparent;
+    color: #444; }
+.button.button-hype.button-outline.active, .button.button-hype.button-outline.activated {
+    background-color: #7f8c8d;
+    box-shadow: none;
+    color: #fff; }
 
 .button-small {
   padding: 2px 4px 1px;
@@ -7011,3 +7041,4 @@ a.button {
   opacity: 0;
   -webkit-transition-duration: 0s;
   transition-duration: 0s; }
+

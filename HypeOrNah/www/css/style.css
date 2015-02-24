@@ -1,1 +1,50 @@
-/* Empty. Add your own CSS if you like */
+@import url(http://fonts.googleapis.com/css?family=Oswald);
+
+.hype_align {
+    display: inline;
+    float: left;
+    color: #2ecc71;
+    font-size: 22px;
+    font-family: 'Oswald', sans-serif;
+}
+
+.venue_align{
+    display: block;
+    text-align: center;
+    font-family: 'Oswald', sans-serif;
+
+}
+
+.nah_align{
+    display: inline;
+    float: right;
+    color: #e74c3c;
+    font-size: 22px;
+    font-family: 'Oswald', sans-serif;
+}
+
+.nah_header{
+    display: inline;
+    float: right;
+    color: #e74c3c;
+    font-size: 15px;
+    font-family: 'Oswald', sans-serif;
+}
+
+
+.hype_header {
+    display: inline;
+    float: left;
+    color: #2ecc71;
+    font-size:15px;
+    font-family: 'Oswald', sans-serif;
+}
+
+.title{
+    font-family: 'Oswald', sans-serif;
+    font-size: 20px;
+}
+
+.button-bar{
+    font-family: 'Oswald', sans-serif;
+}
