@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
-    <title></title>
+    <title>Hype Or Nah</title>
 
     <link href="lib/ionic/css/ionic.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet">
@@ -26,52 +26,11 @@
     <script src="js/factories/fbase-factory.js"></script>
     <!-- controllers -->
     <script src="js/controllers/PlacesCntrl.js"></script>
+    <script src="js/controllers/main-controller.js"></script>
+    <!-- directives -->
+    <script src="js/directives/places-directive/places-directive.js"></script>
   </head>
-  <body ng-controller="PlacesCntrl">
-    <!-- header bar -->
-    <ion-header-bar class="nah_bar">
-
-        <h1 class="title">Nah's</h1>
-    </ion-header-bar>
-
-    <ion-header-bar class="bar-positive">
-
-      <h1 class="title">Hype Or Nah</h1>
-    </ion-header-bar>
-    <ion-header-bar class="bar bar-subheader">
-        <div class="tabs-icon-right">
-            <a class="tab-item-hide">
-                <div class="hype_header">Hype's</div>
-                <div class="nah_header">Nah's</div>
-            </a>
-        </div>
-    </ion-header-bar>
-
-    <ion-content>
-      <!-- refresh content, loaded when list pulled down -->
-      <ion-refresher on-refresh="doRefresh()"></ion-refresher>
-      <!-- main list of places, TODO: should probably be a template? -->
-      <ion-list>
-        <ion-item ng-repeat="place in places">
-            <div class="hype_align">{{place.up_votes}}</div>
-            <div class="nah_align">{{place.down_votes}}</div>
-            <div class="venue_align">{{place.name}}</div>
-
-        </ion-item>
-      </ion-list>
-    </ion-content>
-    <!-- div to render Google Places Attributions -->
-    <div id='mapsAttr'></div>
-    <!-- footer -->
-    <ion-footer-bar class="bar-positive">
-    <div class="button-bar ">
-      <a class="button" ng-class="{'button-hype': isActive('night_club')}"
-        ng-click="setActive('night_club')">Clubs</a>
-    <a class="button" ng-class="{'button-hype': isActive('bar')}"
-        ng-click="setActive('bar')">Bars</a>
-    <a class="button" ng-class="{'button-hype': isActive('greek')}"
-        ng-click="setActive('greek')">Greek</a>
-    </div>
-  </ion-footer-bar>
+  <body>
+    <ion-nav-view></ion-nav-view>
   </body>
 </html>

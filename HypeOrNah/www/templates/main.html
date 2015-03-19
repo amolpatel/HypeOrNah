@@ -1,0 +1,28 @@
+<ion-view view-title="Hype Or Nah">
+    <ion-header-bar class="bar-positive">
+
+      <h1 class="title">Hype Or Nah</h1>
+    </ion-header-bar>
+    <ion-header-bar class="bar bar-subheader">
+        <div class="tabs-icon-right">
+            <a class="tab-item-hide">
+                <div class="hype_header">Hype's</div>
+                <div class="nah_header">Nah's</div>
+            </a>
+        </div>
+    </ion-header-bar>
+    <ion-content class="has-subheader">
+        <places-list places-type="placesType"></places-list>
+    </ion-content>
+    <!-- footer -->
+    <ion-footer-bar align-title="left" class="bar-positive">
+        <div class="button-bar">
+          <a class="button" ng-class="{'button-hype': isActive('night_club')}"
+            ng-click="setActive('night_club')">Clubs</a>
+        <a class="button" ng-class="{'button-hype': isActive('bar')}"
+            ng-click="setActive('bar')">Bars</a>
+        <a class="button" ng-class="{'button-hype': isActive('greek')}"
+            ng-click="setActive('greek')">Greek</a>
+        </div>
+    </ion-footer-bar>
+</ion-view>

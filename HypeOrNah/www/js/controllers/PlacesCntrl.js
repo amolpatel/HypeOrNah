@@ -1,11 +1,12 @@
 angular.module('hypeOrNah')
 
 .controller('PlacesCntrl', function($scope, $timeout, googleFactory, fbaseFactory) {
+    $scope.places = []; 
 
     /*
     *   Populates the list of places
     */
-    $scope.getLocations = function(){
+    $scope.refreshLocations = function(){
         $scope.places = []; 
         var mapsAttr = document.getElementById('mapsAttr'); 
         // get clients position 
@@ -83,7 +84,7 @@ angular.module('hypeOrNah')
     
         console.log('Refreshing!');
         // refersh locations list
-        $scope.getLocations();
+        $scope.refreshLocations();
         $timeout( function() {
             //Stop the ion-refresher from spinning
             $scope.$broadcast('scroll.refreshComplete');
@@ -92,26 +93,6 @@ angular.module('hypeOrNah')
       
     };
 
-    $scope.testClick = function(){
-        console.log("====== printing places========"); 
-        for(i = 0; i < $scope.places.length; i++){
-            console.log($scope.places[i]); 
-        }
-    }
-
-    $scope.setActive = function(type) {
-        $scope.placesType = type;
-        // refresh content
-        $scope.doRefresh(); 
-    };
-
-    $scope.isActive = function(type) {
-        return type === $scope.placesType;
-    };
-  
-
-    // set active radiu buttons
-    $scope.placesType = 'night_club'; 
     // initial refersh to get content
-    $scope.doRefresh(); 
+    //$scope.doRefresh(); 
 });
