@@ -1,13 +1,14 @@
 angular.module('hypeOrNah')
 
 .controller('PlacesCntrl', function($scope, $timeout, googleFactory, fbaseFactory) {
-    $scope.places = []; 
+    $scope.places = {}; 
+
 
     /*
     *   Populates the list of places
     */
     $scope.refreshLocations = function(){
-        $scope.places = []; 
+        $scope.places = {}; 
         var mapsAttr = document.getElementById('mapsAttr'); 
         // get clients position 
         var locOptions = {
@@ -15,6 +16,7 @@ angular.module('hypeOrNah')
             timeout: 5000,
             maximumAge: 0
         };
+
         // get location
         navigator.geolocation.getCurrentPosition(locSuccess, locError, locOptions);
         // client location success callback
@@ -30,7 +32,6 @@ angular.module('hypeOrNah')
             function placesCallback(results, status) {
                 console.log(status); 
                 if (status == google.maps.places.PlacesServiceStatus.OK) {
-                    var places = []; 
                     for(i = 0; i < results.length; i++){
                         fbaseFactory.getPlace(results[i].place_id, (function(index) {
                             return function(data){
@@ -48,17 +49,19 @@ angular.module('hypeOrNah')
 
                                     // write data to firebase and notify UI
                                     fbaseFactory.writeLocation(currPlace, results[index].place_id); 
-                                    $scope.places.push(currPlace); 
+                                    $scope.places[results[index].place_id] = currPlace;
                                 }
                                 else{
                                     // found place in firebase, hand off to UI
                                     console.log("found place in firebase %O", place);
-                                    $scope.places.push(place);  
+                                    $scope.places[results[index].place_id] = place; 
                                 }
 
                                 // check if this was the last item
-                                if(index == (results.length - 1))
+                                if(index == (results.length - 1)){
+                                    console.log($scope.places); 
                                     $scope.$broadcast('scroll.refreshComplete');
+                                }
                             }; 
                         })(i));
                     }
@@ -66,7 +69,7 @@ angular.module('hypeOrNah')
                 else{
                     // error making places call
                     console.warn("Error making google places call"); 
-                    $scope.places = []; 
+                    $scope.places = {}; 
                 }
             }; 
         }; 
@@ -81,7 +84,6 @@ angular.module('hypeOrNah')
     *   List refresh handler
     */
     $scope.doRefresh = function() {
-    
         console.log('Refreshing!');
         // refersh locations list
         $scope.refreshLocations();
@@ -93,6 +95,15 @@ angular.module('hypeOrNah')
       
     };
 
-    // initial refersh to get content
-    //$scope.doRefresh(); 
+    $scope.upVote = function(placeId) {
+        console.log("upvote for place: " + placeId);
+        $scope.places[placeId].up_votes++; 
+        fbaseFactory.vote(placeId, true); 
+    }
+
+    $scope.downVote = function(placeId) {
+        console.log("downvote for place: " + placeId);
+        $scope.places[placeId].down_votes++;
+        fbaseFactory.vote(placeId, false); 
+    }
 });

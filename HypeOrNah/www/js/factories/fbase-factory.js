@@ -18,5 +18,14 @@ angular.module('hypeOrNah')
                 ref.child(place_id).set(data); 
             }; 
 
+            /*
+            *   voteDir: True=>up_votes, False=>down_votes
+            */
+            fbaseFactory.vote = function(placeId, voteDir){
+                var placeVotesRef = ref.child(placeId).child((voteDir) ? 'up_votes' : 'down_votes');
+                placeVotesRef.transaction(function(currVotes){
+                    return currVotes + 1;
+                })
+            }
             return fbaseFactory; 
     }); 
