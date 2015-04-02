@@ -1,4 +1,4 @@
-angular.module('hypeOrNah', ['ionic'])
+angular.module('hypeOrNah', ['ionic', 'hypeOrNah.config'])
 
 .config(function($stateProvider, $urlRouterProvider) {
 

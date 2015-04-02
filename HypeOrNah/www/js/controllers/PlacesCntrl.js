@@ -1,14 +1,14 @@
 angular.module('hypeOrNah')
 
-.controller('PlacesCntrl', function($scope, $timeout, googleFactory, fbaseFactory) {
+.controller('PlacesCntrl', function($scope, $timeout, googleFactory, fbaseFactory, appConfig) {
     $scope.places = {}; 
-
 
     /*
     *   Populates the list of places
     */
     $scope.refreshLocations = function(){
         $scope.places = {}; 
+        
         var mapsAttr = document.getElementById('mapsAttr'); 
         // get clients position 
         var locOptions = {
@@ -18,12 +18,30 @@ angular.module('hypeOrNah')
         };
 
         // get location
-        navigator.geolocation.getCurrentPosition(locSuccess, locError, locOptions);
+        if(appConfig.userLocFromConfig){
+            var pos = {
+                coords : {
+                    'latitude' : appConfig.userLat,
+                    'longitude' : appConfig.userLng
+                }
+            }
+
+            locSuccess(pos); 
+        }
+        else{
+            navigator.geolocation.getCurrentPosition(locSuccess, locError, locOptions);
+
+        }
+
         // client location success callback
         function locSuccess(pos) {
             crd = pos.coords;
             console.log('Latitude : ' + crd.latitude);
             console.log('Longitude: ' + crd.longitude);
+
+            /******************************
+            IMPORTANT: HARD CODE COORDINATES HERE FOR DEBUGGING
+            ******************************/
 
             /*
             * Make call to Google Places API
@@ -33,6 +51,7 @@ angular.module('hypeOrNah')
                 console.log(status); 
                 if (status == google.maps.places.PlacesServiceStatus.OK) {
                     for(i = 0; i < results.length; i++){
+                        // compare place against our database.
                         fbaseFactory.getPlace(results[i].place_id, (function(index) {
                             return function(data){
                                 var place = data.val(); 
@@ -40,26 +59,35 @@ angular.module('hypeOrNah')
                                 if(!place){
                                     // no corresponding firebase place for google place, add to database
                                     console.log("place did not exist, adding to firebase"); 
-                                    var currPlace = {
-                                        name: results[index].name, 
+                                    place = {
+                                        name: results[index].name,
+                                        lng: results[index].geometry.location.lng(),
+                                        lat: results[index].geometry.location.lat(),   
                                         up_votes: 0, 
                                         down_votes: 0, 
                                         source: 'Google Places' 
                                     };  
 
                                     // write data to firebase and notify UI
-                                    fbaseFactory.writeLocation(currPlace, results[index].place_id); 
-                                    $scope.places[results[index].place_id] = currPlace;
+                                    fbaseFactory.writeLocation(place, results[index].place_id); 
+                                    $scope.places[results[index].place_id] = place;
                                 }
                                 else{
                                     // found place in firebase, hand off to UI
-                                    console.log("found place in firebase %O", place);
+                                    console.log("found " + place.name + " in firebase %O", place);
                                     $scope.places[results[index].place_id] = place; 
+                                }
+
+                                // check if user is at location
+                                var googPlaceLat = results[index].geometry.location.lat();
+                                var googPlaceLng = results[index].geometry.location.lng(); 
+                                if(crd.latitude == googPlaceLat && googPlaceLng == crd.longitude){
+                                    console.log("user is at place: %O", place); 
+                                    $scope.userAtLocation()(place); 
                                 }
 
                                 // check if this was the last item
                                 if(index == (results.length - 1)){
-                                    console.log($scope.places); 
                                     $scope.$broadcast('scroll.refreshComplete');
                                 }
                             }; 
@@ -73,6 +101,7 @@ angular.module('hypeOrNah')
                 }
             }; 
         }; 
+
         // client location error callback
         function locError(err) {
           console.log('ERROR(' + err.code + '): ' + err.message);
@@ -91,7 +120,7 @@ angular.module('hypeOrNah')
             //Stop the ion-refresher from spinning
             $scope.$broadcast('scroll.refreshComplete');
     
-        }, 5000);
+        }, appConfig.refreshTimeout);
       
     };
 

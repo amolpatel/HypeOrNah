@@ -12,17 +12,17 @@
         </div>
     </ion-header-bar>
     <ion-content class="has-subheader">
-        <places-list places-type="placesType"></places-list>
+        <places-list places-type="placesType" user-at-location="userAtLocation"></places-list>
     </ion-content>
     <!-- footer -->
     <ion-footer-bar align-title="left" class="bar-positive">
         <div class="button-bar">
-          <a class="button" ng-class="{'button-hype': isActive('night_club')}"
-            ng-click="setActive('night_club')">Clubs</a>
-        <a class="button" ng-class="{'button-hype': isActive('bar')}"
-            ng-click="setActive('bar')">Bars</a>
-        <a class="button" ng-class="{'button-hype': isActive('greek')}"
-            ng-click="setActive('greek')">Greek</a>
+          <a class="button" ng-class="{'button-hype': isActive(nightClubType)}"
+            ng-click="setActive(nightClubType)">Clubs</a>
+        <a class="button" ng-class="{'button-hype': isActive(barType)}"
+            ng-click="setActive(barType)">Bars</a>
+        <a class="button" ng-class="{'button-hype': isActive(greekType)}"
+            ng-click="setActive(greekType)">Greek</a>
         </div>
     </ion-footer-bar>
 </ion-view>

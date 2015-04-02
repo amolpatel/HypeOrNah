@@ -3,9 +3,9 @@
 */
 
 angular.module('hypeOrNah')
-    .factory('fbaseFactory', function fbaseFactory() {
+    .factory('fbaseFactory', function fbaseFactory(appConfig) {
             var fbaseFactory = {};
-            var ref = new Firebase("https://crackling-inferno-9452.firebaseio.com/places");
+            var ref = new Firebase(appConfig.fbPlacesUrl);
             /* 
             * retreives a place object from firebase
             */

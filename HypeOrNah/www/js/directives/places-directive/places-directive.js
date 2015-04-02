@@ -3,6 +3,7 @@ angular.module('hypeOrNah')
 .directive('placesList', function(){
 
     function linkFunc(scope, element, attrs){
+        console.log(scope); 
         scope.$watch(attrs.placesType, function(oldType, newType){
             // PLACES TYPE CHANGED, UPDATE LIST
             scope.doRefresh(); 
@@ -14,7 +15,8 @@ angular.module('hypeOrNah')
         controller: 'PlacesCntrl', 
         templateUrl: '/js/directives/places-directive/places-directive.html', 
         scope: {
-            placesType: '='
+            placesType: '=',
+            userAtLocation: '&' 
         }, 
         link: linkFunc
     }; 
