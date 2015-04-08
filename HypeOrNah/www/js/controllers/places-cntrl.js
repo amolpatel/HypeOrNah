@@ -1,12 +1,19 @@
 angular.module('hypeOrNah')
 
-.controller('PlacesCntrl', function($scope, $timeout, googleFactory, fbaseFactory, appConfig) {
+.controller('PlacesCntrl', function($scope, $timeout, $ionicLoading, googleFactory, fbaseFactory, appConfig) {
     $scope.places = {}; 
+
+    // set scope properties for view
+    $scope.nightClubType = appConfig.nightClubType; 
+    $scope.greekType = appConfig.greekType; 
+    $scope.barType = appConfig.barType; 
+    $scope.userAtPlace = false; 
+
 
     /*
     *   Populates the list of places
     */
-    $scope.refreshLocations = function(){
+    function refreshLocations(){
         $scope.places = {}; 
         
         var mapsAttr = document.getElementById('mapsAttr'); 
@@ -39,10 +46,6 @@ angular.module('hypeOrNah')
             console.log('Latitude : ' + crd.latitude);
             console.log('Longitude: ' + crd.longitude);
 
-            /******************************
-            IMPORTANT: HARD CODE COORDINATES HERE FOR DEBUGGING
-            ******************************/
-
             /*
             * Make call to Google Places API
             */
@@ -74,7 +77,6 @@ angular.module('hypeOrNah')
                                 }
                                 else{
                                     // found place in firebase, hand off to UI
-                                    console.log("found " + place.name + " in firebase %O", place);
                                     $scope.places[results[index].place_id] = place; 
                                 }
 
@@ -83,12 +85,13 @@ angular.module('hypeOrNah')
                                 var googPlaceLng = results[index].geometry.location.lng(); 
                                 if(crd.latitude == googPlaceLat && googPlaceLng == crd.longitude){
                                     console.log("user is at place: %O", place); 
-                                    $scope.userAtLocation()(place); 
+                                    userAtLocation(place); 
                                 }
 
                                 // check if this was the last item
                                 if(index == (results.length - 1)){
                                     $scope.$broadcast('scroll.refreshComplete');
+                                    doneLoading(); 
                                 }
                             }; 
                         })(i));
@@ -109,13 +112,53 @@ angular.module('hypeOrNah')
 
     }; 
 
+   function showLoader(){
+      // Setup the loader
+        $ionicLoading.show({
+            content: 'Loading',
+            animation: 'fade-in',
+            showBackdrop: true,
+            maxWidth: 200,
+            showDelay: 0
+        });
+
+        $timeout(function () {
+            $ionicLoading.hide();
+        }, 5000);
+    }  
+
+    function doneLoading(){
+        console.log("done loading called"); 
+        $ionicLoading.hide(); 
+    }
+
+    function userAtLocation(place){
+        console.log("user at location %O", place); 
+        $scope.userAtPlace = true; 
+        $scope.userPlace = place; 
+    }
+
+    /* TODO: These should be moved to separate date-picker directive */
+    $scope.setActive = function(type) {
+        console.log("changing active to" + type); 
+        $scope.placesType = type;
+        showLoader(); 
+        refreshLocations(); 
+    };
+
+    $scope.isActive =  function(type) {
+        return type === $scope.placesType;
+    };
+
+
     /*
     *   List refresh handler
     */
     $scope.doRefresh = function() {
         console.log('Refreshing!');
         // refersh locations list
-        $scope.refreshLocations();
+        showLoader(); 
+        refreshLocations();
         $timeout( function() {
             //Stop the ion-refresher from spinning
             $scope.$broadcast('scroll.refreshComplete');
@@ -124,15 +167,21 @@ angular.module('hypeOrNah')
       
     };
 
-    $scope.upVote = function(placeId) {
+    $scope.upVote = function() {
+        var placeId = userPlace.placeId; 
         console.log("upvote for place: " + placeId);
         $scope.places[placeId].up_votes++; 
         fbaseFactory.vote(placeId, true); 
     }
 
-    $scope.downVote = function(placeId) {
+    $scope.downVote = function() {
+        var placeId = userPlace.placeId; 
         console.log("downvote for place: " + placeId);
         $scope.places[placeId].down_votes++;
         fbaseFactory.vote(placeId, false); 
     }
+
+    $scope.placesType = appConfig.barType; 
+    $scope.doRefresh(); 
+
 });

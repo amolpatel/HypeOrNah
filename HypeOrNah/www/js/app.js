@@ -3,11 +3,11 @@ angular.module('hypeOrNah', ['ionic', 'hypeOrNah.config'])
 .config(function($stateProvider, $urlRouterProvider) {
 
     $stateProvider
-        .state('main', {
-            url: '/main', 
-            templateUrl: 'templates/main.html', 
-            controller: 'MainCntrl'
+        .state('places', {
+            url: '/places', 
+            templateUrl: 'templates/places-list.html', 
+            controller: 'PlacesCntrl'
         }); 
 
-    $urlRouterProvider.otherwise('/main'); 
+    $urlRouterProvider.otherwise('/places'); 
 }); 

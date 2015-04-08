@@ -1,0 +1,51 @@
+<ion-view view-title="Hype Or Nah">
+    <ion-header-bar class="bar-positive">
+        <h1 class="title">Hype Or Nah</h1>
+    </ion-header-bar>
+    <ion-header-bar class="bar bar-subheader">
+        <div class="tabs-icon-right">
+            <a class="tab-item-hide">
+                <div class="hype_header">Hype's</div>
+                <div class="nah_header">Nah's</div>
+            </a>
+        </div>
+    </ion-header-bar>
+    <ion-content class="has-subheader">
+        <div ng-if="userAtPlace" class="card">
+            <div class="item item-text-wrap" on-swipe-left="downVote()">
+            <i class="icon ion-social-dribbble-outline"></i>
+                <center>
+                    You're at {{userPlace.name}}
+                    <div style="padding-top: 10px; ">
+                        <button class="button button-small button-stable">Post</button>
+                    </div>
+                </center>
+            </div>
+        </div>
+
+        <!-- refresh content, loaded when list pulled down -->
+        <ion-refresher on-refresh="doRefresh()"></ion-refresher>
+        <!-- main list of places, TODO: should probably be a template? -->
+        <ion-list>
+          <ion-item ng-repeat="(place_id, place) in places">
+              <div class="hype_align">{{place.up_votes}}</div>
+              <div class="nah_align">{{place.down_votes}}</div>
+              <div class="venue_align">{{place.name}}</div>
+          </ion-item>
+        </ion-list>
+
+        <!-- div to render Google Places Attributions -->
+        <div id='mapsAttr'></div>
+    </ion-content>
+    <!-- footer -->
+    <ion-footer-bar align-title="left" class="bar-positive">
+        <div class="button-bar">
+          <a class="button" ng-class="{'button-hype': isActive(nightClubType)}"
+            ng-click="setActive(nightClubType)">Clubs</a>
+        <a class="button" ng-class="{'button-hype': isActive(barType)}"
+            ng-click="setActive(barType)">Bars</a>
+        <a class="button" ng-class="{'button-hype': isActive(greekType)}"
+            ng-click="setActive(greekType)">Greek</a>
+        </div>
+    </ion-footer-bar>
+</ion-view>
