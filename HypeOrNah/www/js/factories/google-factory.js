@@ -32,7 +32,7 @@ angular.module('hypeOrNah')
                     else{
                         request = {
                             location: loc,
-                            rankby: google.maps.places.RankBy.DISTANCE,
+                            rankby: google.maps.places.RankBy.PROMINENCE,
                             radius: '5000',
                             types: [type]
                         };

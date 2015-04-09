@@ -8,7 +8,8 @@ angular.module('hypeOrNah')
     $scope.greekType = appConfig.greekType; 
     $scope.barType = appConfig.barType; 
     $scope.userAtPlace = false; 
-
+    $scope.userPlace = {}; 
+    $scope.voted = false; 
 
     /*
     *   Populates the list of places
@@ -57,6 +58,7 @@ angular.module('hypeOrNah')
                         // compare place against our database.
                         fbaseFactory.getPlace(results[i].place_id, (function(index) {
                             return function(data){
+                                var place_id = data.key(); 
                                 var place = data.val(); 
                                 // get data call back with i in scope
                                 if(!place){
@@ -85,7 +87,7 @@ angular.module('hypeOrNah')
                                 var googPlaceLng = results[index].geometry.location.lng(); 
                                 if(crd.latitude == googPlaceLat && googPlaceLng == crd.longitude){
                                     console.log("user is at place: %O", place); 
-                                    userAtLocation(place); 
+                                    userAtLocation(place, place_id); 
                                 }
 
                                 // check if this was the last item
@@ -132,10 +134,10 @@ angular.module('hypeOrNah')
         $ionicLoading.hide(); 
     }
 
-    function userAtLocation(place){
+    function userAtLocation(place, placeId){
         console.log("user at location %O", place); 
         $scope.userAtPlace = true; 
-        $scope.userPlace = place; 
+        $scope.userPlace[placeId] = place; 
     }
 
     /* TODO: These should be moved to separate date-picker directive */
@@ -167,18 +169,24 @@ angular.module('hypeOrNah')
       
     };
 
-    $scope.upVote = function() {
-        var placeId = userPlace.placeId; 
+    $scope.upVote = function(placeId) {
+        if($scope.voted)
+            return; 
+
         console.log("upvote for place: " + placeId);
-        $scope.places[placeId].up_votes++; 
+        $scope.userPlace[placeId].up_votes++; 
         fbaseFactory.vote(placeId, true); 
+        $scope.voted = true; 
     }
 
-    $scope.downVote = function() {
-        var placeId = userPlace.placeId; 
+    $scope.downVote = function(placeId) {
+        if($scope.voted)
+            return; 
+
         console.log("downvote for place: " + placeId);
-        $scope.places[placeId].down_votes++;
+        $scope.userPlace[placeId].down_votes++;
         fbaseFactory.vote(placeId, false); 
+        $scope.voted = true; 
     }
 
     $scope.placesType = appConfig.barType; 

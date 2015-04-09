@@ -12,14 +12,25 @@
     </ion-header-bar>
     <ion-content class="has-subheader">
         <div ng-if="userAtPlace" class="card">
-            <div class="item item-text-wrap" on-swipe-left="downVote()">
+            <div ng-repeat="(userPlaceId, userPlc) in userPlace" class="item item-text-wrap">
+              <div class="hype_align">{{userPlc.up_votes}}</div>
+              <div class="nah_align">{{userPlc.down_votes}}</div>
+              <div class="venue_align">
+                <i class="icon ion-chevron-left" ng-click="upVote(userPlaceId)"></i>
+                <span style="margin-left: 25px; margin-right: 25px;">{{userPlc.name}}</span>
+                <i class="icon ion-chevron-right" ng-click="downVote(userPlaceId)"></i>
+              </div>
+              <div class="venue_align">
+                <button class="button button-small button-stable" style="margin-top: 7px;">Post</button>
+              </div>
+                <!--
             <i class="icon ion-social-dribbble-outline"></i>
                 <center>
                     You're at {{userPlace.name}}
                     <div style="padding-top: 10px; ">
                         <button class="button button-small button-stable">Post</button>
                     </div>
-                </center>
+                </center> -->
             </div>
         </div>
 
