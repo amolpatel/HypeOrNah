@@ -1,5 +1,6 @@
 <ion-view view-title="Hype Or Nah">
     <ion-header-bar class="bar-positive">
+    <button class="button icon ion-gear-a" ng-click="optionsClicked()"></button>
         <h1 class="title">Hype Or Nah</h1>
     </ion-header-bar>
     <ion-header-bar class="bar bar-subheader">
@@ -21,16 +22,8 @@
                 <i class="icon ion-chevron-right" ng-click="downVote(userPlaceId)"></i>
               </div>
               <div class="venue_align">
-                <button class="button button-small button-stable" style="margin-top: 7px;">Post</button>
+                <button class="button button-small button-stable" style="margin-top: 7px;" ng-click="venueClicked(userPlaceId, userPlc)">Post</button>
               </div>
-                <!--
-            <i class="icon ion-social-dribbble-outline"></i>
-                <center>
-                    You're at {{userPlace.name}}
-                    <div style="padding-top: 10px; ">
-                        <button class="button button-small button-stable">Post</button>
-                    </div>
-                </center> -->
             </div>
         </div>
 
@@ -38,7 +31,7 @@
         <ion-refresher on-refresh="doRefresh()"></ion-refresher>
         <!-- main list of places, TODO: should probably be a template? -->
         <ion-list>
-          <ion-item ng-repeat="(place_id, place) in places">
+          <ion-item ng-repeat="(place_id, place) in places" ng-click="venueClicked(place_id, place)">
               <div class="hype_align">{{place.up_votes}}</div>
               <div class="nah_align">{{place.down_votes}}</div>
               <div class="venue_align">{{place.name}}</div>

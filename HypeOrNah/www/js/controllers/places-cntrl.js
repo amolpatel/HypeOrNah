@@ -1,6 +1,6 @@
 angular.module('hypeOrNah')
 
-.controller('PlacesCntrl', function($scope, $timeout, $ionicLoading, googleFactory, fbaseFactory, appConfig) {
+.controller('PlacesCntrl', function($scope, $timeout, $ionicLoading, $ionicModal, googleFactory, fbaseFactory, appConfig) {
     $scope.places = {}; 
 
     // set scope properties for view
@@ -10,107 +10,133 @@ angular.module('hypeOrNah')
     $scope.userAtPlace = false; 
     $scope.userPlace = {}; 
     $scope.voted = false; 
+    $scope.currPlace = {}; 
+    $scope.currPlaceId = ''; 
+    $scope.placesType = appConfig.barType; 
+    // load venue details modal
+    $ionicModal.fromTemplateUrl('templates/place-modal.html', {
+        scope: $scope,
+        animation: 'slide-in-up'
+    }).then(function(modal) {
+        $scope.venueModal = modal; 
+    }); 
+
+    // location settings modal
+    $ionicModal.fromTemplateUrl('templates/settings-modal.html', {
+        scope: $scope, 
+        animation: 'slide-in-up'
+    }).then(function(modal) {
+        $scope.settingsModal = modal; 
+    });
+
+
+    // get default searchCoords, defaults to client location
+    $scope.searchCoords = {}; 
+    setClientLoc(); 
+
+
+    
+    function setClientLoc(){
+        if(appConfig.userLocFromConfig){
+            $scope.searchCoords.lat = appConfig.userLat; 
+            $scope.searchCoords.lng = appConfig.userLng; 
+            return; 
+        }
+
+        // get client location from browser
+        var locOptions = {
+            enableHighAccuracy: true, 
+            timeout: 5000,
+        }; 
+
+        navigator.geolocation.getCurrentPosition(locSuccess, locError, locOptions);
+
+        function locSuccess(pos) {
+            $scope.searchCoords.lat = pos.latitude; 
+            $scope.searchCoords.lng = pos.longitude; 
+        }
+
+        function locError(){
+            alert("Error retreiving your location :/"); 
+        }
+    }
+
 
     /*
     *   Populates the list of places
     */
     function refreshLocations(){
         $scope.places = {}; 
-        
         var mapsAttr = document.getElementById('mapsAttr'); 
-        // get clients position 
-        var locOptions = {
-            enableHighAccuracy: true,
-            timeout: 5000,
-            maximumAge: 0
-        };
-
-        // get location
-        if(appConfig.userLocFromConfig){
-            var pos = {
-                coords : {
-                    'latitude' : appConfig.userLat,
-                    'longitude' : appConfig.userLng
-                }
-            }
-
-            locSuccess(pos); 
+        var crd = {
+            'latitude' : $scope.searchCoords.lat,
+            'longitude' : $scope.searchCoords.lng
         }
-        else{
-            navigator.geolocation.getCurrentPosition(locSuccess, locError, locOptions);
+        console.log("refreshing locations for %O", crd); 
 
-        }
+        /*
+        * Make call to Google Places API
+        */
+        googleFactory.getLocations(crd, $scope.placesType, mapsAttr, placesCallback);
+        function placesCallback(success, results) {
+            console.log(status); 
+            if (success) {
+                var placeCount = 0; 
+                for(var placeId in results){
+                    placeCount++; 
+                    if(!results.hasOwnProperty(placeId))
+                        continue; 
+                    console.log("Checking place " + placeId); 
+                    fbaseFactory.getPlace(placeId, function(placeId, placeCount) {return (function(fbData){
+                        var fbPlace = fbData.val();
 
-        // client location success callback
-        function locSuccess(pos) {
-            crd = pos.coords;
-            console.log('Latitude : ' + crd.latitude);
-            console.log('Longitude: ' + crd.longitude);
-
-            /*
-            * Make call to Google Places API
-            */
-            googleFactory.getLocations(crd, $scope.placesType, mapsAttr, placesCallback);
-            function placesCallback(results, status) {
-                console.log(status); 
-                if (status == google.maps.places.PlacesServiceStatus.OK) {
-                    for(i = 0; i < results.length; i++){
-                        // compare place against our database.
-                        fbaseFactory.getPlace(results[i].place_id, (function(index) {
-                            return function(data){
-                                var place_id = data.key(); 
-                                var place = data.val(); 
-                                // get data call back with i in scope
-                                if(!place){
-                                    // no corresponding firebase place for google place, add to database
-                                    console.log("place did not exist, adding to firebase"); 
-                                    place = {
-                                        name: results[index].name,
-                                        lng: results[index].geometry.location.lng(),
-                                        lat: results[index].geometry.location.lat(),   
-                                        up_votes: 0, 
-                                        down_votes: 0, 
-                                        source: 'Google Places' 
-                                    };  
-
-                                    // write data to firebase and notify UI
-                                    fbaseFactory.writeLocation(place, results[index].place_id); 
-                                    $scope.places[results[index].place_id] = place;
-                                }
-                                else{
-                                    // found place in firebase, hand off to UI
-                                    $scope.places[results[index].place_id] = place; 
-                                }
-
-                                // check if user is at location
-                                var googPlaceLat = results[index].geometry.location.lat();
-                                var googPlaceLng = results[index].geometry.location.lng(); 
-                                if(crd.latitude == googPlaceLat && googPlaceLng == crd.longitude){
-                                    console.log("user is at place: %O", place); 
-                                    userAtLocation(place, place_id); 
-                                }
-
-                                // check if this was the last item
-                                if(index == (results.length - 1)){
-                                    $scope.$broadcast('scroll.refreshComplete');
-                                    doneLoading(); 
-                                }
+                        // check if place is in firebase
+                        if(!fbPlace){
+                            if(typeof results[placeId].name == 'undefined')
+                                return; 
+                            // place result is not in firebase, add it.
+                            place = {
+                                'name': results[placeId].name,
+                                'address': (typeof results[placeId].address == 'undefined') ? '' : results[placeId].address,
+                                'lng': results[placeId].lng, 
+                                'lat': results[placeId].lat, 
+                                'up_votes': 0, 
+                                'down_votes': 0,
+                                'source': 'Google Places'
                             }; 
-                        })(i));
-                    }
-                }
-                else{
-                    // error making places call
-                    console.warn("Error making google places call"); 
-                    $scope.places = {}; 
-                }
-            }; 
-        }; 
+                            console.log("place did not exist, adding to firebase %O", place); 
+                            // write new place to firebase
+                            fbaseFactory.writeLocation(place, placeId); 
+                            $scope.places[placeId] = place; 
+                        }
+                        else{
+                            console.log("place already exists in firbase"); 
+                            // place already existed in firebase
+                            $scope.places[placeId] = fbPlace; 
+                        }
 
-        // client location error callback
-        function locError(err) {
-          console.log('ERROR(' + err.code + '): ' + err.message);
-        };
+                       // check if user is at place
+                        // check if user is at location
+                        var googPlaceLat = results[placeId].lat;
+                        var googPlaceLng = results[placeId].lng; 
+                        if(crd.latitude == googPlaceLat && googPlaceLng == crd.longitude){
+                            console.log("user is at place: %O", $scope.places[placeId]); 
+                            userAtLocation($scope.places[placeId], placeId); 
+                        }
+
+                        // check if this was the last item
+                        if(placeCount == (results.numPlaces)){
+                            $scope.$broadcast('scroll.refreshComplete');
+                            doneLoading(); 
+                        }  
+                        })}(placeId, placeCount));                  
+                }
+
+            }
+            else{
+                alert("Error retreiving places"); 
+            }
+        }; 
 
     }; 
 
@@ -189,7 +215,60 @@ angular.module('hypeOrNah')
         $scope.voted = true; 
     }
 
-    $scope.placesType = appConfig.barType; 
+    $scope.venueClicked = function(placeId, place){
+        console.log("venue clicked"); 
+        $scope.currPlace = place
+        $scope.currPlaceId = placeId
+        $scope.venueModal.show(); 
+    }
+
+    $scope.closeVenueModal = function(){
+        $scope.venueModal.hide(); 
+    }
+
+    $scope.closeSettingsModal = function(){
+        $scope.settingsModal.hide(); 
+    }
+
+    $scope.addressEntered = function(address){
+        googleFactory.getGeo(address, function(success, coords){
+            if(!success){
+                alert("Error retreiving results for address"); 
+            }
+
+            $scope.searchCoords = coords; 
+        })
+    }
+
+    $scope.optionsClicked = function(){
+        console.log("options clicked!"); 
+        $scope.settingsModal.show(); 
+    }
+
+    $scope.myLocClicked = function(){
+        console.log("my location clicked!"); 
+        setClientLoc();
+        $scope.closeSettingsModal(); 
+        $scope.doRefresh(); 
+    }
+
+    $scope.searchLocEntered = function(address){
+        googleFactory.getGeo(address, function(success, coords){
+            console.log(success); 
+            console.log(coords); 
+
+            $scope.searchCoords = coords; 
+            $scope.closeSettingsModal(); 
+            $scope.doRefresh(); 
+        }); 
+    }
+
+    $scope.$on('$destroy', function() {
+        $scope.venueModal.remove(); 
+        $scope.settingsModal.remove(); 
+    })
+
+    // do initial refresh
     $scope.doRefresh(); 
 
 });
