@@ -8,11 +8,21 @@
     font-family: 'Oswald', sans-serif;
 }
 
+.test{
+    color:#e67e22;
+}
+
 .venue_align{
     display: block;
     text-align: center;
     font-family: 'Oswald', sans-serif;
 
+}
+
+.text{
+    font-family: 'Oswald', sans-serif;
+    text-align: center;
+    margin: 5px;
 }
 
 .nah_align{

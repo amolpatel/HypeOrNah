@@ -7,13 +7,13 @@
     </ion-header-bar>
     <ion-content>
         <center><button style="margin-top: 25px;"class="button button-positive" 
-            ng-click="myLocClicked()">My Location</button></center>
+            ng-click="myLocClicked()">Use My Current Location</button></center>
         </br>
         </br>
-        <h3> Or...</h3>
+        <h1 class="title" style="text-align: center">Change Location</h1>
         <div class="list list-insert">
             <label class="item item-input">
-                <input type="text" placeholder="Custom Location." ng-model="address"/>
+                <input type="text" style="text-align: center" placeholder="Enter College, City, or Zip code" ng-model="address"/>
             </label>
         </div>
         <center><button style="margin-top: 10px;" class="button button-positive"
