@@ -6,26 +6,44 @@
         </button>
     </ion-header-bar>
     <ion-content>
-        <button ng-click="getPhoto()" class="button button-block button-primary">Take Photo</button>
-        <img ng-src="{{lastPhoto}}" style="max-width: 100%">
-        <div class="list">
-            <label class="item item-input">
-                <span class="input-label">Name: </span>
-                <input type="text" ng-model="contact.name">
-            </label>
-            <label class="item item-input">
-                <span class="input-label">Info: </span>
-                <input type="text" ng-model="contact.info">
-            </label>
+        <!-- MAIN VIEW -->
+        <div ng-if="venueView == 'main'">
+            <button ng-click="getPhoto()" class="button button-block button-primary">Take Photo</button>
+            <img ng-src="{{lastPhoto}}" style="max-width: 100%">
+            <div class="list">
+                <label class="item item-input">
+                    <span class="input-label">Name: {{currPlace.name}}</span>
+                </label>
+                <label class="item item-input">
+                    <span class="input-label">Info: {{currPlace.address}} </span>
+                </label>
+            </div>
+            <button class="button button-full button-energized" ng-click="closeModal()">Done</button>
         </div>
-        <button class="button button-full button-energized" ng-click="closeModal()">Done</button>
+        <!-- COMMENTS VIEW -->
+        <div ng-if="venueView == 'comments'">
+            <label class="item item-input">
+                <input type="text" ng-model="userComment.value" placeholder="Your comment: "/>
+            </label>
+            <center>
+            <button style="margin-top: 15px; margin-bottom: 15px;" class="button button-energized" ng-click="submitComment()">Submit Comment</button>
+        </center>
+            <ion-list>
+                <ion-item ng-if="currPlace.comments.length == 1">
+                    <center> No comments yet! </center>
+                </ion-item>
+                <ion-item ng-if="currPlace.comments.length > 1 && comment.length > 0" ng-repeat="comment in currPlace.comments track by $index">
+                    {{comment}}
+                </ion-item>
+            </ion-list>
+        </div>
     </ion-content>
     <ion-footer-bar class="bar-positive">
         <div class="button-bar">
-            <a class="button">Venue Details</a>
+            <a class="button" ng-click="mainClicked()" ng-class="{'active' : venueView=='main'}">Venue Details</a>
             <a class="button">Pictures</a>
             <a class="button">Video</a>
-            <a class="button">Commments</a>
+            <a class="button" ng-click="commentsClicked()" ng-class="{'active' : venueView == 'comments'}">Commments</a>
         </div>
     </ion-footer-bar>
 </div>

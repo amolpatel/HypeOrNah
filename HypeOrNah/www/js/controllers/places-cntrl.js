@@ -13,6 +13,8 @@ angular.module('hypeOrNah')
     $scope.currPlace = {}; 
     $scope.currPlaceId = ''; 
     $scope.placesType = appConfig.barType; 
+    $scope.userComment = {}; 
+    $scope.venueView = 'main'; 
     // load venue details modal
     $ionicModal.fromTemplateUrl('templates/place-modal.html', {
         scope: $scope,
@@ -106,6 +108,7 @@ angular.module('hypeOrNah')
                                 'lat': results[placeId].lat, 
                                 'up_votes': 0, 
                                 'down_votes': 0,
+                                'comments': [''],
                                 'source': 'Google Places'
                             }; 
                             console.log("place did not exist, adding to firebase %O", place); 
@@ -253,6 +256,7 @@ angular.module('hypeOrNah')
         console.log("venue clicked"); 
         $scope.currPlace = place
         $scope.currPlaceId = placeId
+        $scope.venueView = 'main'; 
         $scope.venueModal.show(); 
     }
 
@@ -295,6 +299,24 @@ angular.module('hypeOrNah')
             $scope.closeSettingsModal(); 
             $scope.doRefresh(); 
         }); 
+    }
+
+    $scope.commentsClicked = function(){
+        $scope.venueView = 'comments'; 
+    }
+
+    $scope.mainClicked = function(){
+        $scope.venueView='main'; 
+    }
+
+    $scope.submitComment = function(){
+        currPlace = $scope.currPlace; 
+        currPlace.comments.unshift($scope.userComment.value); 
+        console.log($scope.currPlaceId); 
+        console.log(currPlace); 
+        fbaseFactory.writeLocation(currPlace, $scope.currPlaceId); 
+        $scope.userComment.value = ""; 
+        $scope.doRefresh(); 
     }
 
     $scope.$on('$destroy', function() {
