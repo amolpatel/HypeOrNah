@@ -8,18 +8,38 @@
     <ion-content>
         <!-- MAIN VIEW -->
         <div ng-if="venueView == 'main'">
-            <button ng-click="getPhoto()" class="button button-block button-primary">Take Photo</button>
-            <img ng-src="{{lastPhoto}}" style="max-width: 100%">
             <div class="list">
                 <label class="item item-input">
                     <span class="input-label">Name: {{currPlace.name}}</span>
                 </label>
                 <label class="item item-input">
-                    <span class="input-label">Info: {{currPlace.address}} </span>
+                    <span class="input-label textWrap">Address: {{currPlace.address}} </span>
+                </label>
+                <label class="item item-input">
+                    <span class="input-label">Rating: {{currPlace.rating}} </span>
                 </label>
             </div>
-            <button class="button button-full button-energized" ng-click="closeModal()">Done</button>
         </div>
+
+        <!-- PICTURES VIEW -->
+        <div ng-if="venueView == 'pictures'">
+            <ion-slide-box active-slide="myActiveSlide">
+                <ion-slide>
+                    <img src="img/club1.png" height="auto" width="auto">
+                </ion-slide>
+                <ion-slide>
+                    <img src="img/club4.png" height="auto" width="auto">
+                </ion-slide>
+            </ion-slide-box>
+            <div class="list">
+
+                <label class="item item-input">
+                    <span class="input-label">Comment: So fun and good music!</span>
+                </label>
+                <button ng-click="getPhoto()" class="button button-block button-primary">Take Photo</button>
+            </div>
+        </div>
+
         <!-- COMMENTS VIEW -->
         <div ng-if="venueView == 'comments'">
             <label class="item item-input">
@@ -40,9 +60,8 @@
     </ion-content>
     <ion-footer-bar class="bar-positive">
         <div class="button-bar">
-            <a class="button" ng-click="mainClicked()" ng-class="{'active' : venueView=='main'}">Venue Details</a>
-            <a class="button">Pictures</a>
-            <a class="button">Video</a>
+            <a class="button" ng-click="mainClicked()" ng-class="{'active' : venueView=='main'}">Info</a>
+            <a class="button" ng-click="picturesClicked()" ng-class="{'active' : venueView == 'pictures'}">Pictures</a>
             <a class="button" ng-click="commentsClicked()" ng-class="{'active' : venueView == 'comments'}">Commments</a>
         </div>
     </ion-footer-bar>

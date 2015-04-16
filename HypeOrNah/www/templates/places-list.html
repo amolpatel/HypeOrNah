@@ -1,7 +1,7 @@
 <ion-view view-title="Hype Or Nah">
     <ion-header-bar class="bar-positive test">
     <button class="button icon ion-gear-a" ng-click="optionsClicked()"></button>
-        <h1 class="title">Hype Or Nah</h1>
+        <h1 class="title">Hype <a style="color:#f20d74;">Or</a> Nah</h1>
     </ion-header-bar>
     <ion-header-bar class="bar bar-subheader">
         <div class="tabs-icon-right">
@@ -35,7 +35,7 @@
           <ion-item ng-repeat="place in placesArr" ng-click="venueClicked(place.place_id, place)">
               <div class="hype_align">{{place.up_votes}}</div>
               <div class="nah_align">{{place.down_votes}}</div>
-              <div class="venue_align">{{place.name}}</div>
+              <div class="venue_align">{{place.name}}{{place.rating}}</div>
           </ion-item>
         </ion-list>
 

@@ -109,6 +109,7 @@ angular.module('hypeOrNah')
                                 'up_votes': 0, 
                                 'down_votes': 0,
                                 'comments': [''],
+                                'rating':results[placedId].rating,
                                 'source': 'Google Places'
                             }; 
                             console.log("place did not exist, adding to firebase %O", place); 
@@ -303,6 +304,10 @@ angular.module('hypeOrNah')
 
     $scope.commentsClicked = function(){
         $scope.venueView = 'comments'; 
+    }
+
+    $scope.picturesClicked = function(){
+        $scope.venueView = 'pictures';
     }
 
     $scope.mainClicked = function(){

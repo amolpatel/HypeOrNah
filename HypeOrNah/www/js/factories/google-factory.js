@@ -50,8 +50,11 @@ angular.module('hypeOrNah')
                                 'name' : place.name,
                                 'address' : place.vicinity,
                                 'lat' : place.geometry.location.lat(),
-                                'lng' : place.geometry.location.lng()
-                            }; 
+                                'lng' : place.geometry.location.lng(),
+                                'status' : place.open_now,
+                                'rating' : place.rating
+                            };
+                            console.log(place.rating);
                         });
 
                         callback(true, placesResults); 
