@@ -32,7 +32,7 @@
         <ion-refresher on-refresh="doRefresh()"></ion-refresher>
         <!-- main list of places, TODO: should probably be a template? -->
         <ion-list>
-          <ion-item ng-repeat="(place_id, place) in places" ng-click="venueClicked(place_id, place)">
+          <ion-item ng-repeat="place in placesArr" ng-click="venueClicked(place.place_id, place)">
               <div class="hype_align">{{place.up_votes}}</div>
               <div class="nah_align">{{place.down_votes}}</div>
               <div class="venue_align">{{place.name}}</div>

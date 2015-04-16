@@ -2,7 +2,7 @@ angular.module('hypeOrNah')
 
 .controller('PlacesCntrl', function($scope, $timeout, $ionicLoading, $ionicModal, googleFactory, fbaseFactory, appConfig) {
     $scope.places = {}; 
-
+    $scope.placesArr = []; 
     // set scope properties for view
     $scope.nightClubType = appConfig.nightClubType; 
     $scope.greekType = appConfig.greekType; 
@@ -31,15 +31,16 @@ angular.module('hypeOrNah')
 
 
     // get default searchCoords, defaults to client location
-    $scope.searchCoords = {}; 
-    setClientLoc(); 
-
+    $scope.clientLoc = {}; 
+    $scope.searchCoords = null; 
 
     
-    function setClientLoc(){
+    function setClientLoc(callback){
+
         if(appConfig.userLocFromConfig){
-            $scope.searchCoords.lat = appConfig.userLat; 
-            $scope.searchCoords.lng = appConfig.userLng; 
+            $scope.clientLoc.lat = appConfig.userLat; 
+            $scope.clientLoc.lng = appConfig.userLng; 
+            callback(); 
             return; 
         }
 
@@ -52,12 +53,16 @@ angular.module('hypeOrNah')
         navigator.geolocation.getCurrentPosition(locSuccess, locError, locOptions);
 
         function locSuccess(pos) {
-            $scope.searchCoords.lat = pos.latitude; 
-            $scope.searchCoords.lng = pos.longitude; 
+            $scope.clientLoc.lat = pos.coords.latitude; 
+            $scope.clientLoc.lng = pos.coords.longitude; 
+            callback(); 
+            return; 
         }
 
         function locError(){
             alert("Error retreiving your location :/"); 
+            callback(); 
+            return; 
         }
     }
 
@@ -72,7 +77,6 @@ angular.module('hypeOrNah')
             'latitude' : $scope.searchCoords.lat,
             'longitude' : $scope.searchCoords.lng
         }
-        console.log("refreshing locations for %O", crd); 
 
         /*
         * Make call to Google Places API
@@ -140,6 +144,16 @@ angular.module('hypeOrNah')
 
     }; 
 
+
+    /*
+    *   Sorts the place list by most number of hypes first. 
+    */
+    function sortPlaces(){
+        $scope.placesArr.sort(function(a, b){
+            return b.up_votes - a.up_votes; 
+        }); 
+    }
+
    function showLoader(){
       // Setup the loader
         $ionicLoading.show({
@@ -157,6 +171,17 @@ angular.module('hypeOrNah')
 
     function doneLoading(){
         console.log("done loading called"); 
+        /*
+        *   TODO: scope.places needs to be loaded as an array and NOT an object
+        */
+        $scope.placesArr = []; 
+        for(var key in $scope.places){
+            var place = $scope.places[key]; 
+            place.place_id = key; 
+            $scope.placesArr.push(place); 
+        }
+        console.log("places: %O", $scope.placesArr); 
+        sortPlaces(); 
         $ionicLoading.hide(); 
     }
 
@@ -186,7 +211,14 @@ angular.module('hypeOrNah')
         console.log('Refreshing!');
         // refersh locations list
         showLoader(); 
-        refreshLocations();
+        setClientLoc(function(){
+            // client location now set!, set search location if not set
+            if($scope.searchCoords == null)
+                $scope.searchCoords = $scope.clientLoc; 
+
+            refreshLocations(); 
+        }); 
+
         $timeout( function() {
             //Stop the ion-refresher from spinning
             $scope.$broadcast('scroll.refreshComplete');
@@ -203,6 +235,7 @@ angular.module('hypeOrNah')
         $scope.userPlace[placeId].up_votes++; 
         fbaseFactory.vote(placeId, true); 
         $scope.voted = true; 
+        sortPlaces(); 
     }
 
     $scope.downVote = function(placeId) {
@@ -213,6 +246,7 @@ angular.module('hypeOrNah')
         $scope.userPlace[placeId].down_votes++;
         fbaseFactory.vote(placeId, false); 
         $scope.voted = true; 
+        sortPlaces(); 
     }
 
     $scope.venueClicked = function(placeId, place){
@@ -247,7 +281,7 @@ angular.module('hypeOrNah')
 
     $scope.myLocClicked = function(){
         console.log("my location clicked!"); 
-        setClientLoc();
+        $scope.searchCoords = $scope.clientLoc; 
         $scope.closeSettingsModal(); 
         $scope.doRefresh(); 
     }
