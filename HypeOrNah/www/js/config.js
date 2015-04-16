@@ -10,7 +10,7 @@ angular.module('hypeOrNah.config', ['ionic'])
     'barType' : 'bar',
 
     // PLACE DIRECTIVE
-    'refreshTimeout' : 5000,
+    'refreshTimeout' : 10000,
 
     // ENVIRONMENT
     'environment' : 'DEBUG',

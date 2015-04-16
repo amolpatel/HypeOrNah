@@ -49,7 +49,7 @@ angular.module('hypeOrNah')
         // get client location from browser
         var locOptions = {
             enableHighAccuracy: true, 
-            timeout: 5000,
+            timeout: 10000,
         }; 
 
         navigator.geolocation.getCurrentPosition(locSuccess, locError, locOptions);
@@ -169,7 +169,7 @@ angular.module('hypeOrNah')
 
         $timeout(function () {
             $ionicLoading.hide();
-        }, 5000);
+        }, 10000);
     }  
 
     function doneLoading(){
