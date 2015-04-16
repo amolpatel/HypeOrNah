@@ -8,9 +8,12 @@
     font-family: 'Oswald', sans-serif;
 }
 
-.test{
-    color:#e67e22;
+
+.logo{
+    display: inline;
+    float: none;
 }
+
 
 .venue_align{
     display: block;
