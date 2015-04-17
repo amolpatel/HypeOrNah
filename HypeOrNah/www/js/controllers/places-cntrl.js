@@ -84,9 +84,10 @@ angular.module('hypeOrNah')
         * Make call to Google Places API
         */
         googleFactory.getLocations(crd, $scope.placesType, mapsAttr, placesCallback);
-        function placesCallback(success, results) {
+        function placesCallback(success, placesResult) {
             console.log(status); 
             if (success) {
+                var results = placesResult.places; 
                 var placeCount = 0; 
                 for(var placeId in results){
                     placeCount++; 
@@ -109,7 +110,7 @@ angular.module('hypeOrNah')
                                 'up_votes': 0, 
                                 'down_votes': 0,
                                 'comments': [''],
-                                'rating':results[placedId].rating,
+                                'rating':(typeof results[placeId].rating == 'undefined') ? '' : results[placeId].rating,
                                 'source': 'Google Places'
                             }; 
                             console.log("place did not exist, adding to firebase %O", place); 
@@ -133,7 +134,7 @@ angular.module('hypeOrNah')
                         }
 
                         // check if this was the last item
-                        if(placeCount == (results.numPlaces)){
+                        if(placeCount == (placesResult.numPlaces)){
                             $scope.$broadcast('scroll.refreshComplete');
                             doneLoading(); 
                         }  
