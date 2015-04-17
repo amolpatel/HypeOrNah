@@ -1,6 +1,6 @@
 angular.module('hypeOrNah')
 
-.controller('PlacesCntrl', function($scope, $timeout, $ionicLoading, $ionicModal, googleFactory, fbaseFactory, appConfig) {
+.controller('PlacesCntrl', function($scope, $timeout, $ionicLoading, $ionicModal, googleFactory, fbaseFactory, appConfig, CameraService) {
     $scope.places = {}; 
     $scope.placesArr = []; 
     // set scope properties for view
@@ -14,6 +14,7 @@ angular.module('hypeOrNah')
     $scope.currPlaceId = ''; 
     $scope.placesType = appConfig.barType; 
     $scope.userComment = {}; 
+    $scope.camView = false; 
     $scope.venueView = 'main'; 
     // load venue details modal
     $ionicModal.fromTemplateUrl('templates/place-modal.html', {
@@ -323,6 +324,10 @@ angular.module('hypeOrNah')
         fbaseFactory.writeLocation(currPlace, $scope.currPlaceId); 
         $scope.userComment.value = ""; 
         $scope.doRefresh(); 
+    }
+
+    $scope.getPhoto = function (){
+        $scope.camView = true; 
     }
 
     $scope.$on('$destroy', function() {

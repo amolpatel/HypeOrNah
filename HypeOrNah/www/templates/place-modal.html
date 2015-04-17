@@ -23,6 +23,7 @@
 
         <!-- PICTURES VIEW -->
         <div ng-if="venueView == 'pictures'">
+            <div ng-if="!camView">
             <ion-slide-box active-slide="myActiveSlide">
                 <ion-slide>
                     <img src="img/club1.png" height="auto" width="auto">
@@ -31,12 +32,11 @@
                     <img src="img/club4.png" height="auto" width="auto">
                 </ion-slide>
             </ion-slide-box>
-            <div class="list">
-
-                <label class="item item-input">
-                    <span class="input-label">Comment: So fun and good music!</span>
-                </label>
                 <button ng-click="getPhoto()" class="button button-block button-primary">Take Photo</button>
+            </div>
+            <div ng-if="camView">
+                <camera><camera-control-snapshot></camera-control-snapshot></camera>
+                <canvas></canvas>
             </div>
         </div>
 
