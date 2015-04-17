@@ -89,13 +89,18 @@ angular.module('hypeOrNah')
   return {
     restrict: 'EA',
     require: '^camera',
-    scope: true,
+    scope: {
+      picTaken :'&'
+    },
     template: '<button ng-click="takeSnapshot()" class="button button-block button-primary">Take Photo</button>',
     link: function(scope, ele, attrs, cameraCtrl) {
       scope.takeSnapshot = function() {
         cameraCtrl.takeSnapshot()
         .then(function(image) {
           // data image here
+          console.log(image); 
+          console.log(scope); 
+          scope.picTaken({'img' : image}); 
         });
       }
     }

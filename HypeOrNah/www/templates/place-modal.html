@@ -24,19 +24,25 @@
         <!-- PICTURES VIEW -->
         <div ng-if="venueView == 'pictures'">
             <div ng-if="!camView">
-            <ion-slide-box active-slide="myActiveSlide">
+            <ion-slide-box ng-if="currPlace.pics.length > 1" style="margin-top: 15px;">
+            <ion-slide ng-repeat="pic in currPlace.pics" ng-if="pic.length > 1">
+                <center><img src="{{pic}}" height="auto" width="auto"></center>
+            </ion-slide>
+            <!--
                 <ion-slide>
                     <img src="img/club1.png" height="auto" width="auto">
                 </ion-slide>
                 <ion-slide>
                     <img src="img/club4.png" height="auto" width="auto">
-                </ion-slide>
+                </ion-slide>-->
             </ion-slide-box>
                 <button ng-click="getPhoto()" class="button button-block button-primary">Take Photo</button>
             </div>
-            <div ng-if="camView">
-                <camera><camera-control-snapshot></camera-control-snapshot></camera>
-                <canvas></canvas>
+            <div ng-if="camView" style="margin-top: 15px;">
+                <center>
+                    <camera><camera-control-snapshot pic-taken="picTaken(img)"></camera-control-snapshot></camera>
+                    <canvas></canvas>
+                </center>
             </div>
         </div>
 

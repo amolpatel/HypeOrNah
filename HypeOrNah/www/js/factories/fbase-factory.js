@@ -23,6 +23,7 @@ angular.module('hypeOrNah')
                     'up_votes' : data.up_votes, 
                     'lat' : data.lat, 
                     'lng' : data.lng, 
+                    'pics' : data.pics,
                     'name' : data.name, 
                     'rating' : data.rating,
                     'source' : data.source

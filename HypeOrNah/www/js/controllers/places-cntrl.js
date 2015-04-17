@@ -111,6 +111,7 @@ angular.module('hypeOrNah')
                                 'up_votes': 0, 
                                 'down_votes': 0,
                                 'comments': [''],
+                                'pics' : [''],
                                 'rating':(typeof results[placeId].rating == 'undefined') ? '' : results[placeId].rating,
                                 'source': 'Google Places'
                             }; 
@@ -328,6 +329,13 @@ angular.module('hypeOrNah')
 
     $scope.getPhoto = function (){
         $scope.camView = true; 
+    }
+
+    $scope.picTaken = function(image){
+        console.log('pic taken %O' + image); 
+        $scope.currPlace.pics.unshift(image); 
+        fbaseFactory.writeLocation($scope.currPlace, $scope.currPlaceId); 
+        $scope.camView = false; 
     }
 
     $scope.$on('$destroy', function() {
