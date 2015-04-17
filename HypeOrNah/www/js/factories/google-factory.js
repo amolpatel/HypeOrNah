@@ -43,10 +43,11 @@ angular.module('hypeOrNah')
 
                 function placesCallback(results, status, callback){
                     if (status == google.maps.places.PlacesServiceStatus.OK){
-                        var placesResults = {}; 
-                        placesResults.numPlaces = results.length; 
+                        var placesResult = {}; 
+                        var places = {}; 
+                        placesResult.numPlaces = results.length; 
                         results.forEach(function(place){
-                            placesResults[place.place_id] = {
+                            places[place.place_id] = {
                                 'name' : place.name,
                                 'address' : place.vicinity,
                                 'lat' : place.geometry.location.lat(),
@@ -57,7 +58,8 @@ angular.module('hypeOrNah')
                             console.log(place.rating);
                         });
 
-                        callback(true, placesResults); 
+                        placesResult.places = places; 
+                        callback(true, placesResult); 
                     }
                     else{
                         callback(false, null); 

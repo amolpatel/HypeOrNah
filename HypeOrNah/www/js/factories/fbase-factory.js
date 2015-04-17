@@ -24,6 +24,7 @@ angular.module('hypeOrNah')
                     'lat' : data.lat, 
                     'lng' : data.lng, 
                     'name' : data.name, 
+                    'rating' : data.rating,
                     'source' : data.source
                 } ; 
                 ref.child(place_id).set(validData); 
