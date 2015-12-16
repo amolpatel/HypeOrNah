@@ -6,4 +6,4 @@ HypeOrNah is a venue rating app targeted at college campuses and city life. It u
 HypeOrNah was built using the Ionic framework built on top of AngularJS. It is compatible on all browsers and mobile devices.
 
 
-Visit [HypeOrNah](hypeornah.com) for more information.
+Visit [HypeOrNah](http://www.hypeornah.com) for more information.
