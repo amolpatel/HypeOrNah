@@ -16,7 +16,7 @@ angular.module('hypeOrNah.config', ['ionic'])
     'environment' : 'DEBUG',
     'DEBUG' : 'DEBUG',
     'PROD' : 'PROD',
-    'userLocFromConfig' : false,
+    'userLocFromConfig' : true,
     'userLat' : '33.808428', 
     'userLng' : '-84.380653'
     /*
